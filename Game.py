@@ -10,3 +10,6 @@ class Game:
 
     def play(self, playerOnTurn:int, gamePhase:str, moveTo:str) -> str:
         return 'dummy string'
+
+    def isTheGameFinished(self, numberOfPiecesP1 : int, numberOfPiecesP2 : int) -> bool:
+        return True
