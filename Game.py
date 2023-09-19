@@ -17,4 +17,8 @@ class Game:
 
     def isTheGameFinished(self, numberOfPiecesP1 : int, numberOfPiecesP2 : int) -> bool:
         #check if the game is finished
+
+        #if the game is finished
         return True
+
+        #else return false
