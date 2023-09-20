@@ -8,5 +8,5 @@ class Player:
         self.color = color
         self.board = board
 
-    def play(self, initialPosition : str, moveTo : str) -> str:
+    def play(self, initialPosition : str, moveTo : str, pieceIdx : int) -> str:
         return 'dummy string'
