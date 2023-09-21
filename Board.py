@@ -75,7 +75,7 @@ class Board:
             else:
                 return False
 
-    def movePiece(self, initialPosition : str, moveTo : str, playerIdx : int, pieceIdx : int) -> bool:
+    def movePiece(self, initialPosition : str, moveTo : str, playerIdx : int, pieceIdx : int) -> str:
 
         if initialPosition != 'H':
             self.boardRepresentation[initialPosition][0] = 'E'
@@ -84,11 +84,12 @@ class Board:
 
         self.historyOfMoves.append(Move(initialPosition, moveTo, playerIdx, [{}], pieceIdx))
 
-        #don't mind comments in slovak, they will be removed
-        #mill was formed
-        #algoritmus, ktory pojde dva kroky kazdym smerom, pokial ma ten isty hrac polozeny piece na danom mieste
-        #z kazdej cesty spravy pole
-        #tieto polia potom prejdu for cyklom ci sa nahodou nenachadzaju v liste moznych millov
+        #Mill was formed
+
+        #logic of the algorithm below:
+            #go two steps in graph each way
+            #form paths consisting only of pieces of a certain player
+            #check if any of this paths are a mill
         paths = []
         for adj in self.boardRepresentation[moveTo][1]:
             if self.boardRepresentation[adj][0][0] == ['B', 'W'][playerIdx]:
@@ -114,9 +115,11 @@ class Board:
                 temp[coordinate] = self.boardRepresentation[coordinate][0]
             formed_mills_pieces.append(temp)
 
-        #este treba skontrolovat ci nebol sformovany mlyn iba na dva tahy (posunutim jedneho piecu a vratenim ho naspat)
-            #toto bude zrejme treba osetrit cislovanim jednotlivych pieces
+        if formed_mills_pieces == []:
+            return 'Piece was moved succesfully'
 
+
+        #next section evaluates whether player will be awarded with points for forming a mill
 
         #if such mill was never formed before
         bol = True
@@ -126,6 +129,7 @@ class Board:
                     bol = False
         if bol:
             self.historyOfMoves[-1].millsFormed = formed_mills_pieces
+            return 'Piece was moved succesfully. Mill was formed'
 
         else:
             #find out whether the mill was formed by a player in the past
@@ -133,14 +137,7 @@ class Board:
                 for mill in formed_mills_pieces:
                     if mill in move.millsFormed:
                         move_of_piece = {}
-                        # print('_________________________')
-                        # for i in self.historyOfMoves[::-1][:n]:
-                        #     print(i.initialPosition,
-                        #           i.moveTo,
-                        #           i.playerIdx,
-                        #           i.millsFormed,
-                        #           i.pieceIdx)
-                        # print('_________________________')
+
                         for pieceId in mill.values():
                             move_of_piece[pieceId] = 0
 
@@ -150,31 +147,39 @@ class Board:
                         if sum(move_of_piece.values()) > 2:
                             # add mill to history if legal
                             self.historyOfMoves[-1].millsFormed = formed_mills_pieces
+                            return 'Piece was moved succesfully. Mill was formed'
+                        else:
+                            return 'Piece was moved succesfully'
 
 
-        return True # if mill that counts is formed return True else False
+        return 'Anomaly'
 
-a = Board()
-a.movePiece('H', 'A1', 0, 1)
-a.movePiece('H', 'D1', 0, 2)
-a.movePiece('H', 'G1', 0, 3)
+#############################################################
+#logic of player removing the other players' piece is missing
+#logic of multiple mills formed at one turn is missing
+#############################################################
 
-a.movePiece('A1', 'A4', 0, 1)
-a.movePiece('A4', 'A1', 0, 1)
-
-#treba napisat aj test ked je sformovanych viacero millov naraz
-
-print('_________________________')
-for i in a.historyOfMoves:
-    print(i.initialPosition,
-        i.moveTo,
-        i.playerIdx,
-        i.millsFormed,
-        i.pieceIdx)
-print('_________________________')
-
-
-print([i.pieceIdx for i in a.historyOfMoves])
+# a = Board()
+# a.movePiece('H', 'A1', 0, 1)
+# a.movePiece('H', 'D1', 0, 2)
+# a.movePiece('H', 'G1', 0, 3)
+#
+# a.movePiece('A1', 'A4', 0, 1)
+# a.movePiece('A4', 'A1', 0, 1)
+#
+# #treba napisat aj test ked je sformovanych viacero millov naraz
+#
+# print('_________________________')
+# for i in a.historyOfMoves:
+#     print(i.initialPosition,
+#         i.moveTo,
+#         i.playerIdx,
+#         i.millsFormed,
+#         i.pieceIdx)
+# print('_________________________')
+#
+#
+# print([i.pieceIdx for i in a.historyOfMoves])
 
 
 
