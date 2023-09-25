@@ -14,7 +14,8 @@ class Game:
 
         temp = self.playersList[self.playerOnTurn].play(initialPosition, moveTo)
         print(f'here: {temp}')
-        if 'Piece was moved succesfully' in temp:
+
+        if 'Piece was moved succesfully' in temp[0]:
 
             if self.playerOnTurn == 0:
                 self.playerOnTurn = 1
@@ -24,12 +25,25 @@ class Game:
 
             self.numberOfTurns += 1
 
+        #subtract points
+        if temp[1] != 0:
+            self.playersList[self.playerOnTurn].numberOfPieces -= temp[1]
+
+        #update game status if needed
+        if self.numberOfTurns == 24:
+            self.playersList[0].gamePhase = 'late'
+            self.playersList[1].gamePhase = 'late'
+
         return temp
 
-    def isTheGameFinished(self, numberOfPiecesP1 : int, numberOfPiecesP2 : int) -> bool:
+    def isTheGameFinished(self) -> bool:
         #check if the game is finished
 
         #if the game is finished
-        return True
+        if (self.numberOfTurns >= 200 or self.playersList[0].numberOfPieces < 3
+            or self.playersList[0].numberOfPieces < 3):
+            return True
 
-        #else return false
+        else:
+            return False
+

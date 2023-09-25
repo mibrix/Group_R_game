@@ -2,7 +2,9 @@ import GameAdaptor
 
 a = GameAdaptor.GameAdaptor()
 
-while True:
+while not a.game.isTheGameFinished():
+    print('___________________________________________________________________________________________________')
+    print()
     print(f'''A1 : {a.representationOfBoard['A1'][0]} ------------------------------- D1 : {a.representationOfBoard['D1'][0]} ---------------------------------------- G1 : {a.representationOfBoard['G1'][0]}
     |       \               	      	  |                	       	             /     |
     |        \               	          |                	      		   /  	   |
@@ -33,6 +35,11 @@ while True:
     |         /                                |				       \	   |
     A7 : {a.representationOfBoard['A7'][0]} -------------------------------- D7 : {a.representationOfBoard['D7'][0]} -------------------------------------- G7 : {a.representationOfBoard['G7'][0]} ''')
 
+
+    print(f'Player1 pieces left : {a.game.playersList[0].numberOfPieces}')
+    print(f'Player2 pieces left : {a.game.playersList[1].numberOfPieces}')
+    print()
+    print(f'''Player holding {['black','white'][a.game.playerOnTurn]} pieces is on turn''')
     inp = input()
     a.play(inp)
 

@@ -7,7 +7,7 @@ class Player:
         self.numberOfPieces : int = 12
         self.color = color
         self.board = board
-        self.score = 0
+        #self.score = 0
 
         self.gamePhase = 'initial'  # initial(when players put the pieces from "pocket"
         # late = after all pieces have been placed to the board
@@ -24,7 +24,7 @@ class Player:
             if self.board.boardRepresentation[initialPosition][0] != ['B', 'W'][self.playerIdx]:
                 return 'You are not allowed to move the piece'
 
-        if not self.board.isTheMoveLegal(initialPosition, moveTo, self.playerIdx):
+        if not self.board.isTheMoveLegal(initialPosition, moveTo, self.numberOfPieces):
             return 'You are not allowed to put a piece to intentioned position'
 
 
