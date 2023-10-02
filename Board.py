@@ -80,7 +80,7 @@ class Board:
 
     def removeOpponentPiece(self, opponentIdx : int ):
         '''return True for valid input else False'''
-
+        print('''Remove opponet's piece''')
         piecePosition: str = input()
         if self.boardRepresentation[piecePosition][0][0] == ['B','W'][opponentIdx]:
             self.boardRepresentation[piecePosition][0] = 'E'
@@ -110,7 +110,7 @@ class Board:
                 paths.append([moveTo, adj])
 
         paths_three = []
-        #pridaj susedovho suseda
+        #add neighbour of a neighbour
         for path in paths:
             for adj in self.boardRepresentation[path[-1]][1]:
                 if self.boardRepresentation[adj][0][0] == ['B', 'W'][playerIdx] and adj not in path:
@@ -132,7 +132,6 @@ class Board:
         if formed_mills_pieces == []:
             return ['Piece was moved succesfully',0]
 
-        print(formed_mills_pieces)
         #next section evaluates whether player will be awarded with points for forming a mill
 
         #if such mill was never formed before
@@ -167,6 +166,7 @@ class Board:
 
 
         self.historyOfMoves[-1].millsFormed = final_mills
+
 
         if final_mills != []:
             for _ in range(len(final_mills)):

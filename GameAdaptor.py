@@ -12,9 +12,6 @@ class GameAdaptor:
         self.game = Game(self.board)
         self.representationOfBoard: dict[str, tuple[str, list[str]]] = self.board.boardRepresentation
 
-    def notify(self, message : str):
-        print(message)
-
     def play(self, move : str):
         'A4 to B4'
         'H to B4'
@@ -24,7 +21,7 @@ class GameAdaptor:
 
         temp = self.game.play(initialPosition, moveTo)
 
-        self.notify(temp)
+        return temp[0]
 
 
 # a = GameAdaptor()

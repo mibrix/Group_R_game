@@ -12,25 +12,24 @@ class Player:
         self.gamePhase = 'initial'  # initial(when players put the pieces from "pocket"
         # late = after all pieces have been placed to the board
 
-    def play(self, initialPosition : str, moveTo : str) -> str:
+    def play(self, initialPosition : str, moveTo : str) -> list:
 
         if self.gamePhase == 'initial':
 
             if initialPosition != 'H':
-                return 'It is initial phase of the game. Starting position should be H'
+                return ['It is initial phase of the game. Starting position should be H']
 
         elif self.gamePhase == 'late':
 
             if self.board.boardRepresentation[initialPosition][0] != ['B', 'W'][self.playerIdx]:
-                return 'You are not allowed to move the piece'
+                return ['You are not allowed to move the piece']
 
         if not self.board.isTheMoveLegal(initialPosition, moveTo, self.numberOfPieces):
-            return 'You are not allowed to put a piece to intentioned position'
+            return ['You are not allowed to put a piece to intentioned position']
 
 
         temp = self.board.movePiece(initialPosition, moveTo, self.playerIdx, self.numberOfPieces)
 
-        self.numberOfPieces -= 1
 
         if temp == 'Piece was moved succesfully. Mill was formed':
             self.increaseScore()

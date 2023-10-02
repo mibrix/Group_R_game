@@ -13,7 +13,6 @@ class Game:
         #call appropriate method for player on turn
 
         temp = self.playersList[self.playerOnTurn].play(initialPosition, moveTo)
-        print(f'here: {temp}')
 
         if 'Piece was moved succesfully' in temp[0]:
 
@@ -26,7 +25,7 @@ class Game:
             self.numberOfTurns += 1
 
         #subtract points
-        if temp[1] != 0:
+        if len(temp) > 1 and  temp[1] != 0:
             self.playersList[self.playerOnTurn].numberOfPieces -= temp[1]
 
         #update game status if needed
