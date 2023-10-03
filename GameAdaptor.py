@@ -24,6 +24,8 @@ class GameAdaptor:
         return temp[0]
 
 
+#tests
+
 # a = GameAdaptor()
 # print(a.play('A1 to D1'))
 
