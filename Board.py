@@ -121,8 +121,13 @@ class Board:
         #add neighbour of a neighbour
         for path in paths:
             for adj in self.boardRepresentation[path[-1]][1]:
-                if self.boardRepresentation[adj][0][0] == ['B', 'W'][playerIdx] and adj not in path:
-                    paths_three.append(path + [adj])
+                for adj1 in self.boardRepresentation[path[0]][1]:
+                    if self.boardRepresentation[adj][0][0] == ['B', 'W'][playerIdx] and adj not in path:
+                        if set(path + [adj]) not in [set(temp) for temp in paths_three]:
+                            paths_three.append(path + [adj])
+                    if self.boardRepresentation[adj1][0][0] == ['B', 'W'][playerIdx] and adj1 not in path:
+                        if set(path + [adj1]) not in [set(temp) for temp in paths_three]:
+                            paths_three.append(path + [adj1])
 
 
         formed_mills = []

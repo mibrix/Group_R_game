@@ -40,7 +40,13 @@ class Game:
 
         #if the game is finished
         if (self.numberOfTurns >= 200 or self.playersList[0].numberOfPieces < 3
-            or self.playersList[0].numberOfPieces < 3):
+            or self.playersList[1].numberOfPieces < 3):
+            if self.numberOfTurns >= 200:
+                print('Game ended a draw')
+            elif self.playersList[0].numberOfPieces < 3:
+                print('Player holding white pieces won!')
+            elif self.playersList[0].numberOfPieces < 3:
+                print('Player holding black pieces won!')
             return True
 
         else:

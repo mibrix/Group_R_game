@@ -43,4 +43,3 @@ A7 : [{a.representationOfBoard['A7'][0]}] ------------------------------- D7 : [
     print(message)
     inp = input()
     message = a.play(inp)
-
