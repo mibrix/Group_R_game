@@ -5,6 +5,7 @@ class Player:
     def __init__(self, playerIdx : int, color : str, board : Board()):
         self.playerIdx = playerIdx
         self.numberOfPieces : int = 12
+        self.placedPieces = 0
         self.color = color
         self.board = board
         #self.score = 0
@@ -24,11 +25,13 @@ class Player:
             if self.board.boardRepresentation[initialPosition][0] != ['B', 'W'][self.playerIdx]:
                 return ['You are not allowed to move the piece']
 
-        if not self.board.isTheMoveLegal(initialPosition, moveTo, self.numberOfPieces):
+        if not self.board.isTheMoveLegal(initialPosition, moveTo, self.placedPieces):
             return ['You are not allowed to put a piece to intentioned position']
 
 
-        temp = self.board.movePiece(initialPosition, moveTo, self.playerIdx, self.numberOfPieces)
+        temp = self.board.movePiece(initialPosition, moveTo, self.playerIdx, self.placedPieces)
+
+        self.placedPieces += 1
 
 
         if temp == 'Piece was moved succesfully. Mill was formed':

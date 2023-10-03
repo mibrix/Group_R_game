@@ -82,6 +82,14 @@ class Board:
         '''return True for valid input else False'''
         print('''Remove opponet's piece''')
         piecePosition: str = input()
+
+        if piecePosition not in ['A1', 'D1', 'G1', 'A4', 'G4', 'A7', 'D7',
+                                        'G7', 'B2', 'D2', 'F2', 'F4', 'F6', 'D6',
+                                        'B6', 'B4', 'C3', 'D3', 'E3', 'E4', 'E5',
+                                        'D5', 'C5', 'C4']:
+            print('Illgegal position. Do it again.')
+            return False
+
         if self.boardRepresentation[piecePosition][0][0] == ['B','W'][opponentIdx]:
             self.boardRepresentation[piecePosition][0] = 'E'
             return True
