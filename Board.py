@@ -1,12 +1,3 @@
-class Move:
-
-    def __init__(self, initialPosition : str, moveTo : str, playerIdx : int, millsFormed : list[dict], pieceIdx : int):
-        self.initialPosition = initialPosition
-        self.moveTo = moveTo
-        self.playerIdx = playerIdx
-        self.millsFormed = millsFormed
-        self.pieceIdx = pieceIdx  #B1 detones first piece of a player that holds black pieces
-
 class Board:
 
     def __init__(self):
@@ -41,7 +32,8 @@ class Board:
                                                                     # elif player with white pieces place a piece to D1 then change
                                                                     # "E" to "W"
                                                                     # E = empty; B = black; W = white
-        self.historyOfMoves = []
+        self.mills_formed_history = { 0 : [], 1 : []}
+        self.active_mills = { 0 : [], 1 : []}
 
 
         self.possibleMills = [{'A1', 'D1', 'G1'}, {'B2', 'D2', 'F2'},
@@ -78,7 +70,7 @@ class Board:
             else:
                 return False
 
-    def removeOpponentPiece(self, opponentIdx : int ):
+    def removeOpponentPiece(self, opponentIdx : int, number_of_pieces : int ):
         '''return True for valid input else False'''
         print('''Remove opponet's piece''')
         piecePosition: str = input()
@@ -91,20 +83,32 @@ class Board:
             return False
 
         if self.boardRepresentation[piecePosition][0][0] == ['B','W'][opponentIdx]:
+            if number_of_pieces > 3:
+                for active_mill in self.active_mills[opponentIdx]:
+                    if piecePosition in active_mill:
+                        return print('''Illgegal position. You are trying to remove a piece from opponent's mill Do it again.''')
             self.boardRepresentation[piecePosition][0] = 'E'
             return True
         else:
             print('Illgegal position. Do it again.')
             return False
 
-    def movePiece(self, initialPosition : str, moveTo : str, playerIdx : int, pieceIdx : int) -> list:
+    def movePiece(self, initialPosition : str, moveTo : str, playerIdx : int, pieceIdx : int, number_of_pieces : int) -> list:
 
         if initialPosition != 'H':
             self.boardRepresentation[initialPosition][0] = 'E'
 
         self.boardRepresentation[moveTo][0] = ['B', 'W'][playerIdx] + str(pieceIdx)
 
-        self.historyOfMoves.append(Move(initialPosition, moveTo, playerIdx, [{}], pieceIdx))
+        temp = []
+        for n,mill in enumerate(self.active_mills[playerIdx]):
+            if initialPosition in mill:
+                temp.append(n)
+
+        for idx in temp:
+            self.active_mills[playerIdx][idx] = []
+
+        self.active_mills[playerIdx] = [i for i in self.active_mills[playerIdx] if i != []]
 
         #Mill was formed
 
@@ -142,48 +146,56 @@ class Board:
                 temp[coordinate] = self.boardRepresentation[coordinate][0]
             formed_mills_pieces.append(temp)
 
+
         if formed_mills_pieces == []:
             return ['Piece was moved succesfully',0]
 
         #next section evaluates whether player will be awarded with points for forming a mill
 
-        #if such mill was never formed before
-        bol = [True for _ in range(len(formed_mills_pieces))]
-        for n, move in enumerate(self.historyOfMoves[::-1]):
-            for c,mill in enumerate(formed_mills_pieces):
-                if mill in move.millsFormed:
-                    bol[c] = False
+        # #if such mill was never formed before
+        # bol = [True for _ in range(len(formed_mills_pieces))]
+        # for n, move in enumerate(self.historyOfMoves[::-1]):
+        #     for c,mill in enumerate(formed_mills_pieces):
+        #         if mill in move.millsFormed:
+        #             bol[c] = False
+        #
+        # final_mills = []
+        #
+        # for n,mill in enumerate(formed_mills_pieces):
+        #     if bol[n]:
+        #         final_mills.append(mill)
+        #         formed_mills_pieces[n] = False
+        #
+        # #find out whether the mill was formed by a player in the past
+        # for n,move in enumerate(self.historyOfMoves[::-1]):
+        #     for mill in formed_mills_pieces:
+        #         if mill in move.millsFormed and mill != False:
+        #             move_of_piece = {}
+        #
+        #             for pieceId in mill.values():
+        #                 move_of_piece[pieceId] = 0
+        #
+        #             for move_new in self.historyOfMoves[::-1][:n]:
+        #                 move_of_piece[['B', 'W'][playerIdx] + str(move_new.pieceIdx)] += 1
+        #
+        #             if sum(move_of_piece.values()) > 2:
+        #                 # add mill to history if legal
+        #                 final_mills.append(mill)
+
 
         final_mills = []
-
-        for n,mill in enumerate(formed_mills_pieces):
-            if bol[n]:
+        for mill in formed_mills:
+            if set(mill) not in self.mills_formed_history[playerIdx]:
                 final_mills.append(mill)
-                formed_mills_pieces[n] = False
-
-        #find out whether the mill was formed by a player in the past
-        for n,move in enumerate(self.historyOfMoves[::-1]):
-            for mill in formed_mills_pieces:
-                if mill in move.millsFormed and mill != False:
-                    move_of_piece = {}
-
-                    for pieceId in mill.values():
-                        move_of_piece[pieceId] = 0
-
-                    for move_new in self.historyOfMoves[::-1][:n]:
-                        move_of_piece[['B', 'W'][playerIdx] + str(move_new.pieceIdx)] += 1
-
-                    if sum(move_of_piece.values()) > 2:
-                        # add mill to history if legal
-                        final_mills.append(mill)
-
-
-        self.historyOfMoves[-1].millsFormed = final_mills
+                self.mills_formed_history[playerIdx].append(set(mill))
+                self.active_mills[playerIdx].append(set(mill))
+            elif set(mill) in self.mills_formed_history[playerIdx]:
+                self.active_mills[playerIdx].append(set(mill))
 
 
         if final_mills != []:
             for _ in range(len(final_mills)):
-                while not self.removeOpponentPiece((playerIdx - 1) % 2):
+                while not self.removeOpponentPiece((playerIdx - 1) % 2, number_of_pieces):
                     True
             return [f'Piece was moved succesfully. {len(final_mills)} mill(s) was/were formed', len(final_mills)]
         else:
@@ -194,15 +206,22 @@ class Board:
 #Tests:
 
 # a = Board()
+#
+# a.movePiece('H', 'D5', 0, 1)
+#
+# a.movePiece('H', 'D7', 1, 1)
+# a.movePiece('H', 'A7', 1, 1)
+# a.movePiece('H', 'G7', 1, 1)
+#
+#
 # a.movePiece('H', 'A1', 0, 1)
 # a.movePiece('H', 'D1', 0, 2)
-# a.movePiece('H', 'G7', 0, 3)
-# a.movePiece('H', 'G4', 0, 4)
-# print(a.movePiece('H', 'G1', 0, 5))
 #
+# print(a.movePiece('H', 'G1', 0, 5))
 # a.movePiece('A1', 'A4', 0, 1)
 # print(a.movePiece('A4', 'A1', 0, 1))
-# #
+
+#
 #
 # print('_________________________')
 # for i in a.historyOfMoves:

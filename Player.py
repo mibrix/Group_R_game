@@ -31,7 +31,7 @@ class Player:
             return ['You are not allowed to put a piece to intentioned position']
 
 
-        temp = self.board.movePiece(initialPosition, moveTo, self.playerIdx, self.placedPieces)
+        temp = self.board.movePiece(initialPosition, moveTo, self.playerIdx, self.placedPieces, self.numberOfPieces)
 
         if self.gamePhase == 'initial':
             self.placedPieces += 1
